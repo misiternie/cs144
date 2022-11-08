@@ -2,7 +2,7 @@
 #define SPONGE_LIBSPONGE_BYTE_STREAM_HH
 
 #include <string>
-
+#include <deque>
 //! \brief An in-order byte stream.
 
 //! Bytes are written on the "input" side and read from the "output"
@@ -18,6 +18,11 @@ class ByteStream {
     // different approaches.
 
     bool _error{};  //!< Flag indicating that the stream suffered an error.
+
+    //添加的成员变量
+    size_t _capacity, _total_writed_len = 0, _total_read_len = 0;    //capacity : stream总容量。   total_writed_len ： 总写入长度。   total_read_len ：总弹出长度。
+    std::deque<char> _q = { };  //stream使用deque（双端队列）实现.
+    bool _eof = false; 
 
   public:
     //! Construct a stream with room for `capacity` bytes.
