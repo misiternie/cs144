@@ -29,7 +29,8 @@ size_t ByteStream::write(const string &data) {
 //! \param[in] len bytes will be copied from the output side of the buffer
 string ByteStream::peek_output(const size_t len) const {
     size_t n = min(len, buffer_size());
-    return string().assign(_q.end()-n, _q.end());
+    // return string().assign(_q.end()-n, _q.end());
+    return string().assign(_q.begin(), _q.begin()+n);
 }
 
 //! \param[in] len bytes will be removed from the output side of the buffer
