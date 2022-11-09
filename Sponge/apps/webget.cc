@@ -29,7 +29,7 @@ void get_URL(const string &host, const string &path) {
     tcp_s.write("\r\n");
 
     while (!tcp_s.eof()) {
-        cerr << tcp_s.read();   //不能使用cerr，需使用cout
+        cout << tcp_s.read();   //不能使用cerr，需使用cout
     }
     tcp_s.close();
 }
