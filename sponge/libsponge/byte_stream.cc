@@ -23,6 +23,8 @@ size_t ByteStream::write(const string &data) {
         _q.emplace_back(data[i]);
     _total_writed_len += n;
 
+    
+
     return n;
 }
 
