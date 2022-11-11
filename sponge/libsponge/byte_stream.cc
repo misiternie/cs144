@@ -22,9 +22,7 @@ size_t ByteStream::write(const string &data) {
     for (size_t i = 0; i < n; i ++)
         _q.emplace_back(data[i]);
     _total_writed_len += n;
-
     
-
     return n;
 }
 
@@ -39,7 +37,8 @@ string ByteStream::peek_output(const size_t len) const {
 void ByteStream::pop_output(const size_t len) { 
     size_t n = min(len, buffer_size());
     for (size_t i = 1; i <= n; i ++)
-        _q.pop_front(), _total_read_len ++;
+        _q.pop_front();
+    _total_read_len += n;
 }
 
 //! Read (i.e., copy and then pop) the next "len" bytes of the stream
