@@ -20,7 +20,7 @@ class StreamReassembler {
     size_t _capacity;    //!< The maximum number of bytes
 
     //add code
-    std::set<std::pair<uint64_t, char> > _data_set = {}; 
+    std::set<std::pair<uint64_t, std::string> > _data_set = {}; 
     size_t _first_unassembled = 0, _accepted_len = 0;
     bool _eof = false;
 
@@ -58,6 +58,7 @@ class StreamReassembler {
 
     //add code
     size_t stream_reassembler_size() const;
+    size_t merge(size_t beg, size_t end, size_t index, const std::string &data);
 };
 
 #endif  // SPONGE_LIBSPONGE_STREAM_REASSEMBLER_HH
