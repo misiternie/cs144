@@ -1,6 +1,7 @@
 Lab 1 Writeup
 =============
-
+链接 ： CS144 lab1 学习记录 - 黎果的文章 - 知乎
+https://zhuanlan.zhihu.com/p/582628330
 My name: [your name here]
 
 My SUNet ID: [your sunetid here]

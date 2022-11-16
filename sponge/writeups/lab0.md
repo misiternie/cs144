@@ -1,5 +1,7 @@
 Lab 0 Writeup
 =============
+知乎链接：cs144 lab0 实验笔记 - 黎果的文章 - 知乎
+https://zhuanlan.zhihu.com/p/581461311
 
 My name: [聂力]
 
