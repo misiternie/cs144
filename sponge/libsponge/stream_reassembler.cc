@@ -60,7 +60,7 @@ size_t StreamReassembler::unassembled_bytes() const { return _accepted_len - _fi
 
 bool StreamReassembler::empty() const { return _data_set.empty(); }
 
-size_t StreamReassembler::stream_reassembler_size() const { return _capacity - _output.buffer_size() - unassembled_bytes(); }
+uint64_t StreamReassembler::get_reassemble_start() const {  return _first_unassembled; };
 
 size_t StreamReassembler::merge(size_t beg, size_t end, const size_t index, const string &data) {
 
