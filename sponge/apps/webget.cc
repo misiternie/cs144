@@ -27,6 +27,7 @@ void get_URL(const string &host, const string &path) {
     tcp_s.write("Host: " + host + "\r\n");
     tcp_s.write("Connection: close\r\n");
     tcp_s.write("\r\n");
+    tcp_s.shutdown(SHUT_WR);
 
     while (!tcp_s.eof()) {
         cout << tcp_s.read();   //不能使用cerr，需使用cout

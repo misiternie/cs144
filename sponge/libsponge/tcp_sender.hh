@@ -9,12 +9,69 @@
 #include <functional>
 #include <queue>
 
+//add class
+class TCPTimer{
+  private:
+    //! true : timer start , false : timer not start
+    bool _start;
+    unsigned int init_time;
+    //! Transmission time
+    unsigned int transmission_time;
+    //! retransmission timeout
+    unsigned int RTO;
+
+  public:
+    //! Number of consecutive retransmissions
+    unsigned int count_of_retransmission;
+
+    TCPTimer(unsigned int time)
+        : _start(false)
+        , init_time(time)
+        , transmission_time(0)
+        , RTO(init_time)
+        , count_of_retransmission(0) {}
+
+    bool running() { return _start; }
+
+    void close() {
+        _start = false;
+        count_of_retransmission = 0;
+    }
+
+    void start() {
+        _start = true;
+        RTO = init_time;
+        transmission_time = 0;
+        count_of_retransmission = 0;
+    }
+
+//! if window == 0 then keep RTO , otherwise double RTO
+    void doubleOrkeep_RTO_and_restart(const size_t window) {
+        if (!running())
+            return;
+        if (window != 0)
+            RTO *= 2;
+        transmission_time = 0;
+        count_of_retransmission ++;
+    }
+
+    bool timeout(const size_t ms_since_last_tick) {
+        if (!running())
+            return false;
+        if (ms_since_last_tick + transmission_time >= RTO)
+            return true;
+        transmission_time += ms_since_last_tick;
+        return false;
+    }
+};
+
 //! \brief The "sender" part of a TCP implementation.
 
 //! Accepts a ByteStream, divides it up into segments and sends the
 //! segments, keeps track of which segments are still in-flight,
 //! maintains the Retransmission Timer, and retransmits in-flight
 //! segments if the retransmission timer expires.
+
 class TCPSender {
   private:
     //! our initial sequence number, the number for our SYN.
@@ -31,6 +88,16 @@ class TCPSender {
 
     //! the (absolute) sequence number for the next byte to be sent
     uint64_t _next_seqno{0};
+
+    //add code
+    std::queue<TCPSegment> _segments_out_temp{}; //在接收到对应ack前暂存segment，以待重传
+    uint64_t _window_size{1}; //最近recv返回的能接收的窗口容量
+    uint64_t _ackno{0};  //最近recv返回的ackno
+    //unsigned int _consecutive_retransmission_times{0}; //连续重传次数
+    uint64_t _bytes_in_flight{0}; //已发送未确认的字节数
+    TCPTimer _timer{_initial_retransmission_timeout};
+    void send_not_empty_segment(TCPSegment &seg);
+
 
   public:
     //! Initialize a TCPSender
@@ -62,11 +129,12 @@ class TCPSender {
 
     //! \name Accessors
     //!@{
+      
 
     //! \brief How many sequence numbers are occupied by segments sent but not yet acknowledged?
     //! \note count is in "sequence space," i.e. SYN and FIN each count for one byte
     //! (see TCPSegment::length_in_sequence_space())
-    size_t bytes_in_flight() const;
+    size_t bytes_in_flight() const; 
 
     //! \brief Number of consecutive retransmissions that have occurred in a row
     unsigned int consecutive_retransmissions() const;
