@@ -89,12 +89,18 @@ void TCPSender::ack_received(const WrappingInt32 ackno, const uint16_t window_si
 
     while (!_segments_out_temp.empty()) {  //丢弃已经完全确认的段，不再需要追踪
         TCPSegment &seg = _segments_out_temp.front();
-        if (unwrap(seg.header().seqno, _isn, _ackno) + seg.length_in_sequence_space() > _ackno)
+        // cerr << _bytes_in_flight << " qqqqqq " << unwrap(seg.header().seqno, _isn, _ackno) << ' ' <<
+        // seg.length_in_sequence_space() <<' ' <<
+        // _ackno << "\r\n";
+        if (unwrap(seg.header().seqno, _isn, _ackno) + static_cast<uint64_t>(seg.length_in_sequence_space()) > _ackno)
         // if (ackno.raw_value() < seg.header().seqno.raw_value() 
         // + static_cast<uint32_t>(seg.length_in_sequence_space()))
             break;
-        _segments_out_temp.pop();
         _bytes_in_flight -= seg.length_in_sequence_space();
+        _segments_out_temp.pop();   //因为取队头用的是引用，所以出队之前应先计算_bytes_in_flight
+        // cerr << _bytes_in_flight << "  wwwwwwwwwwww" << unwrap(seg.header().seqno, _isn, _ackno) << ' ' <<
+        // seg.length_in_sequence_space() <<' ' <<
+        // _ackno << "\r\n";
     }
     //std::cout << _next_seqno << " _bytes_in_flight :  " << _bytes_in_flight << "\r\n";
     fill_window();
