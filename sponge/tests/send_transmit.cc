@@ -67,7 +67,8 @@ int main() {
 
         {
             TCPConfig cfg;
-            WrappingInt32 isn(rd());
+            // WrappingInt32 isn(rd());
+            WrappingInt32 isn(0);
             cfg.fixed_isn = isn;
 
             TCPSenderTestHarness test{"Many short writes, ack at end", cfg};
