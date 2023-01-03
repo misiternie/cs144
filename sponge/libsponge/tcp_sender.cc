@@ -72,16 +72,16 @@ void TCPSender::fill_window() {
 
 //! \param ackno The remote receiver's ackno (acknowledgment number)
 //! \param window_size The remote receiver's advertised window size
-void TCPSender::ack_received(const WrappingInt32 ackno, const uint16_t window_size) { 
+bool TCPSender::ack_received(const WrappingInt32 ackno, const uint16_t window_size) { 
     uint64_t new_ackno = unwrap(ackno, _isn, _ackno);
     //std::cout << ackno.raw_value() << "   " << new_ackno << "\r\n";
     if (new_ackno > _next_seqno)  //不在正常区间的ack直接丢弃
-        return ;
+        return false;
 
     _window_size = static_cast<size_t>(window_size);//必须放在下面那个判断之前，因为即使是后来的ack，它的winsize也是合法的
 
     if (new_ackno <= _ackno)
-        return ;
+        return true;
 
     _ackno = new_ackno;
 
@@ -107,6 +107,8 @@ void TCPSender::ack_received(const WrappingInt32 ackno, const uint16_t window_si
 
     if (_segments_out_temp.empty())
         _timer.close();
+    
+    return true;
 
 }
 
