@@ -11,7 +11,7 @@ void DUMMY_CODE(Targs &&... /* unused */) {}
 
 using namespace std;
 
-void TCPReceiver::segment_received(const TCPSegment &seg) {
+bool TCPReceiver::segment_received(const TCPSegment &seg) {
 
     TCPHeader const &header = seg.header(); 
     Buffer const &data = seg.payload();
@@ -28,7 +28,10 @@ void TCPReceiver::segment_received(const TCPSegment &seg) {
     if (_recv_syn) {
         _reassembler.push_substring(data.copy(), unwrap(seqno-1, _isn, _checkpoint), fin);  //减1去掉syn
         _checkpoint = _reassembler.get_reassemble_start();
+        return true;
     }
+    else
+        return false;
 
     
 }
